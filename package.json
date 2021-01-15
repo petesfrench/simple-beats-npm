@@ -10,7 +10,10 @@
     "type": "git",
     "url": "git+https://github.com/petesfrench/simple-metronome.git"
   },
-  "author": "",
+  "keywords": [
+    "metronome", "timing"
+  ],
+  "author": "Peter French",
   "license": "ISC",
   "bugs": {
     "url": "https://github.com/petesfrench/simple-metronome/issues"
