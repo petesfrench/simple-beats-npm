@@ -1,0 +1,19 @@
+{
+  "name": "simple-metronome",
+  "version": "1.0.0",
+  "description": "Simple metronome using webaudio api",
+  "main": "simple-metronome.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/petesfrench/simple-metronome.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/petesfrench/simple-metronome/issues"
+  },
+  "homepage": "https://github.com/petesfrench/simple-metronome#readme"
+}
