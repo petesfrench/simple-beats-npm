@@ -1,5 +1,5 @@
 {
-  "name": "simple-metronome",
+  "name": "@petesfrench/simple-metronome",
   "version": "1.0.0",
   "description": "Simple metronome using webaudio api",
   "main": "simple-metronome.js",
