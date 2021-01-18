@@ -4,6 +4,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const hihat =  new Metronome(200, 16);
   const bass = new Metronome(200, 8);
   const snare = new Metronome(200, 8);
+  const metronome = new Metronome();
 
   //URLs for samples
   const closedHiHatSampleFilePath = 'https://oramics.github.io/sampled/DRUMS/pearl-master-studio/samples/hihat-closed.wav';
@@ -27,9 +28,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
   const playButton = document.getElementById('playButton');
   playButton.addEventListener('click', () => {
-    hihat.start();
-    bass.start();
-    snare.start();
+    // hihat.start();
+    // bass.start();
+    // snare.start();
+    metronome.start();
   })
 
 });
