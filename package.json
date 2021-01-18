@@ -19,9 +19,5 @@
     "metronome"
   ],
   "author": "Peter French",
-  "license": "ISC",
-  "bugs": {
-    "url": ""
-  },
-  "homepage": ""
+  "license": "ISC"
 }
