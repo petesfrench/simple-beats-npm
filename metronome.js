@@ -103,8 +103,8 @@ class Metronome {
   }
 
   _valueChecks() {
-    while (this._noteVolumes.length < this.timeSigniture) {
-      this._noteVolumes = this._noteVolumes.push(...this._noteVolumes);
+    while (this._noteVolumes.length < this._timeSigniture) {
+      this._noteVolumes = [...this._noteVolumes, ...this._noteVolumes]
     }
   }
 
