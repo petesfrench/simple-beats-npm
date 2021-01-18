@@ -3,7 +3,7 @@ function getMetronome () {
 const DEFAULT_LOOKAHEAD_MS = 25;
 const DEFAULT_SCHEDULE_S = 0.1;
 const DEFAULT_BPM = 90;
-const DEFAULT_TIME_SIGNITURE = 4;
+const DEFAULT_TIME_SIGNITURE = 16;
 const DEFAULT_NOTE_LENGTH = 0.05;
 const DEFAULT_OSCILLATOR_TYPE = 'sine';
 const DEFAULT_FREQUENCY = 220;
@@ -19,7 +19,7 @@ class Metronome {
   constructor(
     BPM = DEFAULT_BPM,
     timeSigniture = DEFAULT_TIME_SIGNITURE,
-    gain = DEFAULT_GAIN) {
+    gain) {
       //User mutable
     this._BPM = BPM;
     this._timeSigniture = timeSigniture;
