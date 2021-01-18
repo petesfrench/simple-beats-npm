@@ -1,3 +1,7 @@
+function getMetronome () {
+
+
+
 const DEFAULT_LOOKAHEAD_MS = 25;
 const DEFAULT_SCHEDULE_S = 0.1;
 const DEFAULT_BPM = 90;
@@ -57,7 +61,7 @@ class Metronome {
   }
 
   updateAccentChecked() {
-    this.accentChecked ^= true;
+    this._accentChecked ^= true;
   }
 
   set noteVolumes(volumesArray) {
@@ -95,7 +99,6 @@ class Metronome {
   }
 
   //min frequency check not working...TODO
-  // frequency = DEFAULT_FREQUENCY;
   set frequency(freq) {
     if (freq <= MIN_FREQUENCY) freq = MIN_FREQUENCY;
     this._frequency = freq;
@@ -129,7 +132,7 @@ class Metronome {
 
   //Note scheduling operations ------------------------------
   _nextNote() {
-    const secondsPerBeat = MINUTE / this.BPM;
+    const secondsPerBeat = MINUTE / this._BPM;
     this._nextNoteTime += secondsPerBeat;
     this._currentNote++;
     if (this._currentNote >= this._timeSigniture /*|| this._currentNote >= this._noteVolumes.length*/) {
@@ -137,7 +140,6 @@ class Metronome {
     }
   }
 
-  // notesInQueue = [];
   // this allows output of the notesInQueue array
   aListener(val) {};
   //but calling instance.registerListener(()=>console.log(val))
@@ -149,7 +151,7 @@ class Metronome {
 
   _scheduleSamples(beatNumber, time) {
 
-    this.notesInQueue.push({ note: beatNumber, time: time });
+    this._notesInQueue.push({ note: beatNumber, time: time });
     this.aListener(this._notesInQueue)
     if (this._notesInQueue.length >= this._timeSigniture) this._notesInQueue.splice(0,1);
 
@@ -265,4 +267,7 @@ class Metronome {
     return sampleSource;
   }
 
+}
+
+return Metronome;
 }
