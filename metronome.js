@@ -1,4 +1,4 @@
-module.exports = function getMetronome () {
+function getMetronome () {
 
 const DEFAULT_LOOKAHEAD_MS = 25;
 const DEFAULT_SCHEDULE_S = 0.1;
@@ -8,7 +8,7 @@ const DEFAULT_NOTE_LENGTH = 0.05;
 const DEFAULT_OSCILLATOR_TYPE = 'sine';
 const DEFAULT_FREQUENCY = 220;
 const MIN_FREQUENCY = 40;
-const MINUTE = 60;
+const MINUTE = 30;
 const DEFAULT_GAIN = 1;
 
 const AudioContext = window.AudioContext || window.webkitAudioContext; //maybe change
@@ -36,18 +36,16 @@ class Metronome {
     this._samplesLoaded = false;
     this._accentChecked = false;
 
-
+      //Internal values
     this._notesInQueue = [];
     this._playing = false;
-    this._timerID; //stores the setTimeout ID
-    this._nextNoteTime = 0.0; //when the next note is due
+    this._timerID;
+    this._nextNoteTime = 0.0;
     this._currentNote = 0;
-    this._lookahead = DEFAULT_LOOKAHEAD_MS; //how often to schedule (in ms)
-    this._scheduleAheadTime = DEFAULT_SCHEDULE_S; //how far ahead to shedule (in secs)
+    this._lookahead = DEFAULT_LOOKAHEAD_MS;
+    this._scheduleAheadTime = DEFAULT_SCHEDULE_S;
 
   };
-
-  //Schedular settings
 
   //Client settings ----------------------------------------
   set BPM(newBPM) {
@@ -74,7 +72,6 @@ class Metronome {
     this._noteLength =  Number(time);
   }
 
-  //Client Oscillator settings ---------------------------------
   set oscillatorType(wave) {
     let newWaveType;
     switch (wave) {
@@ -96,25 +93,21 @@ class Metronome {
     this._oscillatorType = newWaveType;
   }
 
-  //min frequency check not working...TODO
   set frequency(freq) {
     if (freq <= MIN_FREQUENCY) freq = MIN_FREQUENCY;
     this._frequency = freq;
   }
 
-  //Sets volume - currently only mutes/unmutes.. TODO
   set gain(gain) {
     this._noteVolumes = new Array(this._timeSigniture).fill(1);
   }
 
-  //Function to replace what I want setters to do....
   _valueChecks() {
     while (this._noteVolumes.length < this.timeSigniture) {
       this._noteVolumes = this._noteVolumes.push(...this._noteVolumes);
     }
   }
 
-  //Starts the metronome -----------------------------------
   start() {
     if (!this._playing) {
       this._currentNote = 0;
@@ -128,21 +121,17 @@ class Metronome {
     }
   }
 
-  //Note scheduling operations ------------------------------
   _nextNote() {
     const secondsPerBeat = MINUTE / this._BPM;
     this._nextNoteTime += secondsPerBeat;
     this._currentNote++;
-    if (this._currentNote >= this._timeSigniture /*|| this._currentNote >= this._noteVolumes.length*/) {
+    if (this._currentNote >= this._timeSigniture) {
       this._currentNote = 0;
     }
   }
 
-  // this allows output of the notesInQueue array
+  // This allows output of the notesInQueue array to sync with graphics
   aListener(val) {};
-  //but calling instance.registerListener(()=>console.log(val))
-  //you will recieve the value where ever you make this call
-  //TODO: use to link up with graphics
   registerListener(listener) {
     this.aListener = listener;
   }
@@ -171,16 +160,8 @@ class Metronome {
 
     this._notesInQueue.push({ note: beatNumber, time: time });
 
-    //Instantiate oscillator
     const oscillator = audioCtx.createOscillator();
     const gainNode = audioCtx.createGain();
-
-    //TODO REMOVE IF NOT NEEDED
-    // if (this.mutedNotes.includes(beatNumber)) {
-    //   gainNode.gain.setValueAtTime(0, audioCtx.currentTime);
-    // } else {
-    //   gainNode.gain.setValueAtTime(1, audioCtx.currentTime);
-    // }
 
     oscillator.connect(gainNode);
     gainNode.connect(audioCtx.destination);
@@ -189,9 +170,9 @@ class Metronome {
 
     if (this._accentChecked) {
 
-      if (beatNumber === this._timeSigniture - 1) oscillator.frequency.value = this._frequency * 2; //if first note play higher pitch noise
+      if (beatNumber === this._timeSigniture - 1) oscillator.frequency.value = this._frequency * 2;
 
-      else oscillator.frequency.value = this._frequency; //if not first note play medium pitch noise
+      else oscillator.frequency.value = this._frequency;
 
     } else if (!this._accentChecked) {
 
@@ -204,7 +185,6 @@ class Metronome {
 
   }
 
-  //Calls the scheduling functions to run using setTimeout
   _scheduler() {
 
     let context;
@@ -212,9 +192,9 @@ class Metronome {
 
     function contextScheduler() {
       while (context._nextNoteTime < audioCtx.currentTime + context._scheduleAheadTime) {
-        if (context._samplesLoaded) context._scheduleSamples(context._currentNote, context._nextNoteTime); //schedules future notes
+        if (context._samplesLoaded) context._scheduleSamples(context._currentNote, context._nextNoteTime);
         else context._scheduleOscillator(context._currentNote, context._nextNoteTime);
-        context._nextNote(); //increments the 'pointer'
+        context._nextNote();
       }
       context._timerID = window.setTimeout(contextScheduler, context._lookahead);
     }
@@ -223,9 +203,8 @@ class Metronome {
 
   }
 
-  //Deal with custom samples --------------------------------------------
+  //Deal with custom samples
 
-  //Load custom samples (only from url)
   loadSamples(urlArray) {
     this._setUpSample(urlArray)
       .then(samples => {
@@ -234,7 +213,6 @@ class Metronome {
       })
   }
 
-  //Fetch samples from URL, process and assign to a buffer
   async _loadSound(audioCtxParam, filePath) {
     const response = await fetch(filePath);
     const arrayBuffer = await response.arrayBuffer()
@@ -242,8 +220,6 @@ class Metronome {
     return audioBuffer;
   };
 
-
-  //Map through array of samples and pass into _loadSound()
   async _setUpSample(urlArray) {
     return Promise.all(urlArray.map(async path => {
       let sampleHolder = {};
@@ -251,7 +227,7 @@ class Metronome {
       sampleHolder.name = path.match(/([^\/]+)(?=\.\w+$)/)[0].replace(/-/, '_');
       return sampleHolder;
     }))
-      .then(data => data); //why? I forget...
+      .then(data => data);
   };
 
   _playSample(audioCtxParam, audioBuffer, noteVolume = 1) {
