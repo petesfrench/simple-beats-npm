@@ -114,10 +114,12 @@ class Metronome {
       this._valueChecks();
       this._scheduler();
       this._playing = true;
-    } else {
-      window.clearTimeout(this._timerID);
-      this._playing = false;
     }
+  }
+
+  stop() {
+    window.clearTimeout(this._timerID);
+    this._playing = false;
   }
 
   _nextNote() {
