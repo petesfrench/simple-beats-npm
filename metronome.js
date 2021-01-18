@@ -20,7 +20,6 @@ class Metronome {
     BPM = DEFAULT_BPM,
     timeSigniture = DEFAULT_TIME_SIGNITURE,
     gain = DEFAULT_GAIN) {
-
       //User mutable
     this._BPM = BPM;
     this._timeSigniture = timeSigniture;
@@ -214,10 +213,14 @@ class Metronome {
   }
 
   async _loadSound(audioCtxParam, filePath) {
+    try {
     const response = await fetch(filePath);
     const arrayBuffer = await response.arrayBuffer()
     const audioBuffer = await audioCtxParam.decodeAudioData(arrayBuffer);
     return audioBuffer;
+    } catch (e) {
+      console.log(e);
+    }
   };
 
   async _setUpSample(urlArray) {
@@ -227,7 +230,7 @@ class Metronome {
       sampleHolder.name = path.match(/([^\/]+)(?=\.\w+$)/)[0].replace(/-/, '_');
       return sampleHolder;
     }))
-      .then(data => data);
+    .then(data => data);
   };
 
   _playSample(audioCtxParam, audioBuffer, noteVolume = 1) {
