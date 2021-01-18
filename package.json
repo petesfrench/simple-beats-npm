@@ -1,6 +1,6 @@
 {
   "name": "@petesfrench/simple-metronome-test",
-  "version": "1.0.9",
+  "version": "1.0.10",
   "description": "Simple metronome using webaudio api",
   "main": "lib/metronome.js",
   "directories": {
