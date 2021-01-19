@@ -168,7 +168,8 @@ class Metronome {
     } else if (!this._accentChecked) {
       oscillator.frequency.value = this._frequency;
     }
-
+      console.log('beat num', beatNumber)
+      console.log('note vol', this._noteVolumes[beatNumber])
     if (this._noteVolumes[beatNumber] !== 0) {
       oscillator.start(time + this._pushNote);
       oscillator.stop(time + this._noteLength + this._pushNote);
