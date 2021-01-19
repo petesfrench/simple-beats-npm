@@ -98,7 +98,7 @@ class Metronome {
   }
 
   set gain(gain) {
-    this._noteVolumes = new Array(this._timeSigniture).fill(1);
+    this._noteVolumes = new Array(this._timeSigniture).fill(gain);
   }
 
   _valueChecks() {
@@ -142,17 +142,11 @@ class Metronome {
     this._notesInQueue.push({ note: beatNumber, time: time });
     this.aListener(this._notesInQueue, audioCtx.currentTime, this._samplesArray[0].name)
     if (this._notesInQueue.length >= this._timeSigniture) this._notesInQueue.splice(0,1);
-
     if (this._accentChecked && this._samplesArray.length >= 2) {
-
       if (beatNumber === this._timeSigniture - 1) this._playSample(audioCtx, this._samplesArray[1].audioBuffer, this._noteVolumes[beatNumber]);
-
       else this._playSample(audioCtx, this._samplesArray[0].audioBuffer, this._noteVolumes[beatNumber]);
-
     } else {
-
       this._playSample(audioCtx, this._samplesArray[0].audioBuffer, this._noteVolumes[beatNumber]);
-
     }
 
   }
@@ -168,22 +162,17 @@ class Metronome {
     gainNode.connect(audioCtx.destination);
     oscillator.type = this._oscillatorType;
 
-
     if (this._accentChecked) {
-
       if (beatNumber === this._timeSigniture - 1) oscillator.frequency.value = this._frequency * 2;
-
       else oscillator.frequency.value = this._frequency;
-
     } else if (!this._accentChecked) {
-
       oscillator.frequency.value = this._frequency;
-
     }
 
-    oscillator.start(time + this._pushNote);
-    oscillator.stop(time + this._noteLength + this._pushNote);
-
+    if (this._noteVolumes[beatNumber] !== 0) {
+      oscillator.start(time + this._pushNote);
+      oscillator.stop(time + this._noteLength + this._pushNote);
+    }
   }
 
   _scheduler() {
