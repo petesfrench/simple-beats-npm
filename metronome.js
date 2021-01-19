@@ -8,8 +8,8 @@ const DEFAULT_NOTE_LENGTH = 0.05;
 const DEFAULT_OSCILLATOR_TYPE = 'sine';
 const DEFAULT_FREQUENCY = 220;
 const MIN_FREQUENCY = 40;
-const MINUTE = 30;
-const DEFAULT_GAIN = 1;
+const MINUTE = 15;
+// const DEFAULT_GAIN = 1;
 
 const AudioContext = window.AudioContext || window.webkitAudioContext; //maybe change
 const audioCtx = new AudioContext();
@@ -140,7 +140,7 @@ class Metronome {
   _scheduleSamples(beatNumber, time) {
 
     this._notesInQueue.push({ note: beatNumber, time: time });
-    this.aListener(this._notesInQueue)
+    this.aListener(this._notesInQueue, audioCtx.currentTime, this._samplesArray[0].name)
     if (this._notesInQueue.length >= this._timeSigniture) this._notesInQueue.splice(0,1);
 
     if (this._accentChecked && this._samplesArray.length >= 2) {
