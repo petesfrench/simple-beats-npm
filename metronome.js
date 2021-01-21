@@ -52,10 +52,6 @@ class Metronome {
     this._timeSigniture = Number(newTimeSigniture);
   }
 
-  updateAccentChecked() {
-    this._accentChecked ^= true;
-  }
-
   set noteVolumes(volumesArray) {
     if (volumesArray) this._noteVolumes = volumesArray;
     else console.error("No array of volumes has been passed.");
@@ -71,22 +67,16 @@ class Metronome {
     else console.error("No time has been passed.");
   }
 
-  set oscillatorType(wave) {
-    if (wave) {
-      let newWaveType;
-      switch (wave) {
-        case "sine":
-        case "square":
-        case "sawtooth":
-        case "triangle":
-          newWaveType = wave;
-          break;
-        default:
-          newWaveType = DEFAULT_OSCILLATOR_TYPE;
-      }
-      this._oscillatorType = newWaveType;
-    } else {
-      console.error("No wave value has been passed.");
+  set oscillatorType(wave = DEFAULT_OSCILLATOR_TYPE) {
+    switch (wave) {
+      case "sine":
+      case "square":
+      case "sawtooth":
+      case "triangle":
+        this._oscillatorType = wave;
+        break;
+      default:
+        this._oscillatorType = DEFAULT_OSCILLATOR_TYPE;
     }
   }
 
@@ -97,6 +87,10 @@ class Metronome {
 
   set gain(gain = DEFAULT_GAIN) {
     this._noteVolumes = new Array(this._timeSigniture).fill(gain);
+  }
+
+  updateAccentChecked() {
+    this._accentChecked ^= true;
   }
 
   _valueChecks() {
@@ -130,10 +124,10 @@ class Metronome {
   }
 
   // This allows output of the notesInQueue array to sync with graphics
-  aListener(val) {}
-  registerListener(listener) {
-    this.aListener = listener;
-  }
+  // aListener(val) {}
+  // registerListener(listener) {
+  //   this.aListener = listener;
+  // }
 
   _scheduleSamples(beatNumber, time) {
     this._notesInQueue.push({ note: beatNumber, time: time });
