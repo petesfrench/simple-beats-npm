@@ -134,6 +134,7 @@ class Metronome {
     this._notesInQueue.push({ note: beatNumber, time: time });
     this.aListener(this._notesInQueue, audioCtx.currentTime, this._samplesArray[0].name)
     if (this._notesInQueue.length >= this._timeSigniture) this._notesInQueue.splice(0,1);
+
     if (this._accentChecked && this._samplesArray.length >= 2) {
       if (beatNumber === this._timeSigniture - 1) this._playSample(audioCtx, this._samplesArray[1].audioBuffer, this._noteVolumes[beatNumber]);
       else this._playSample(audioCtx, this._samplesArray[0].audioBuffer, this._noteVolumes[beatNumber]);
@@ -213,7 +214,7 @@ class Metronome {
     return Promise.all(urlArray.map(async path => {
       let sampleHolder = {};
       sampleHolder.audioBuffer = await this._loadSound(audioCtx, path);
-      sampleHolder.name = path.match(/([^\/]+)(?=\.\w+$)/)[0].replace(/-/, '_');
+      sampleHolder.name = path.match(/\/([^\/]+)\/?$/)[1].replace(/-/, '_');
       return sampleHolder;
     }))
     .then(data => data);
