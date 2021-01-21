@@ -124,10 +124,10 @@ class Metronome {
   }
 
   // This allows output of the notesInQueue array to sync with graphics
-  aListener(val) {};
-  registerListener(listener) {
-    this.aListener = listener;
-  }
+  // aListener(val) {};
+  // registerListener(listener) {
+  //   this.aListener = listener;
+  // }
 
   _scheduleSamples(beatNumber, time) {
 
