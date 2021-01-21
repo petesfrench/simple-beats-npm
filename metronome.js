@@ -52,16 +52,19 @@ class Metronome {
     this._timeSigniture = Number(newTimeSigniture);
   }
 
+  //array of num
   set noteVolumes(volumesArray) {
     if (volumesArray) this._noteVolumes = volumesArray;
     else console.error("No array of volumes has been passed.");
   }
 
+  //can be negative
   set budge(time) {
     if (time) this._pushNote = time;
     else console.error("No time has been passed.");
   }
 
+  //has to be positive.
   set noteLength(time) {
     if (time) this._noteLength = Number(time);
     else console.error("No time has been passed.");
@@ -123,41 +126,34 @@ class Metronome {
     }
   }
 
-  // This allows output of the notesInQueue array to sync with graphics
-  // aListener(val) {}
-  // registerListener(listener) {
-  //   this.aListener = listener;
-  // }
-
   _scheduleSamples(beatNumber, time) {
-    this._notesInQueue.push({ note: beatNumber, time: time });
-    this.aListener(
-      this._notesInQueue,
-      audioCtx.currentTime,
-      this._samplesArray[0].name
-    );
-    if (this._notesInQueue.length >= this._timeSigniture)
-      this._notesInQueue.splice(0, 1);
-    if (this._accentChecked && this._samplesArray.length >= 2) {
-      if (beatNumber === this._timeSigniture - 1)
-        this._playSample(
-          audioCtx,
-          this._samplesArray[1].audioBuffer,
-          this._noteVolumes[beatNumber]
-        );
-      else
+    if (beatNumber && time) {
+      this._notesInQueue.push({ note: beatNumber, time: time });
+
+      if (this._notesInQueue.length >= this._timeSigniture)
+        this._notesInQueue.splice(0, 1);
+
+      if (this._accentChecked && this._samplesArray.length >= 2) {
+        if (beatNumber === this._timeSigniture - 1)
+          this._playSample(
+            audioCtx,
+            this._samplesArray[1].audioBuffer,
+            this._noteVolumes[beatNumber]
+          );
+        else
+          this._playSample(
+            audioCtx,
+            this._samplesArray[0].audioBuffer,
+            this._noteVolumes[beatNumber]
+          );
+      } else {
         this._playSample(
           audioCtx,
           this._samplesArray[0].audioBuffer,
           this._noteVolumes[beatNumber]
         );
-    } else {
-      this._playSample(
-        audioCtx,
-        this._samplesArray[0].audioBuffer,
-        this._noteVolumes[beatNumber]
-      );
-    }
+      }
+    } else console.error("No beatNumber or time provided.")
   }
 
   _scheduleOscillator(beatNumber, time) {
@@ -234,28 +230,33 @@ class Metronome {
     }
   }
 
+  //Array [str]
   async _setUpSample(urlArray) {
-    return Promise.all(
-      urlArray.map(async (path) => {
-        let sampleHolder = {};
-        sampleHolder.audioBuffer = await this._loadSound(audioCtx, path);
-        sampleHolder.name = path
-          .match(/([^\/]+)(?=\.\w+$)/)[0]
-          .replace(/-/, "_");
-        return sampleHolder;
-      })
-    ).then((data) => data);
+    if (urlArray) {
+      return Promise.all(
+        urlArray.map(async (path) => {
+          let sampleHolder = {};
+          sampleHolder.audioBuffer = await this._loadSound(audioCtx, path);
+          sampleHolder.name = path
+            .match(/([^\/]+)(?=\.\w+$)/)[0]
+            .replace(/-/, "_");
+          return sampleHolder;
+        })
+      ).then((data) => data);
+    } else console.error("No path array had been provided");
   }
 
   _playSample(audioCtxParam, audioBuffer, noteVolume = 1) {
-    const sampleSource = audioCtxParam.createBufferSource();
-    const gainNode = audioCtx.createGain();
-    sampleSource.buffer = audioBuffer;
-    sampleSource.connect(gainNode);
-    gainNode.connect(audioCtxParam.destination);
-    gainNode.gain.value = noteVolume;
-    sampleSource.start();
-    return sampleSource;
+    if (audioCtxParam && audioBuffer) {
+      const sampleSource = audioCtxParam.createBufferSource();
+      const gainNode = audioCtx.createGain();
+      sampleSource.buffer = audioBuffer;
+      sampleSource.connect(gainNode);
+      gainNode.connect(audioCtxParam.destination);
+      gainNode.gain.value = noteVolume;
+      sampleSource.start();
+      return sampleSource;
+    } else console.error("No Audio Parameters or Buffer had been provided");
   }
 }
 
