@@ -153,34 +153,34 @@ class Metronome {
           this._noteVolumes[beatNumber]
         );
       }
-    } else console.error("No beatNumber or time provided.")
+    } else console.error("No beatNumber or time provided.");
   }
 
   _scheduleOscillator(beatNumber, time) {
-    this._notesInQueue.push({ note: beatNumber, time: time });
+    if (beatNumber && time) {
+      this._notesInQueue.push({ note: beatNumber, time: time });
 
-    const oscillator = audioCtx.createOscillator();
-    const gainNode = audioCtx.createGain();
+      const oscillator = audioCtx.createOscillator();
+      const gainNode = audioCtx.createGain();
 
-    oscillator.connect(gainNode);
-    gainNode.connect(audioCtx.destination);
-    oscillator.type = this._oscillatorType;
+      oscillator.connect(gainNode);
+      gainNode.connect(audioCtx.destination);
+      oscillator.type = this._oscillatorType;
 
-    if (this._noteVolumes[beatNumber] === 0) {
-      gainNode.gain.setValueAtTime(0, audioCtx.currentTime);
-    }
-    if (this._accentChecked) {
-      if (beatNumber === this._timeSigniture - 1)
-        oscillator.frequency.value = this._frequency * 2;
-      else oscillator.frequency.value = this._frequency;
-    } else if (!this._accentChecked) {
-      oscillator.frequency.value = this._frequency;
-    }
+      if (this._noteVolumes[beatNumber] === 0) {
+        gainNode.gain.setValueAtTime(0, audioCtx.currentTime);
+      }
+      if (this._accentChecked) {
+        if (beatNumber === this._timeSigniture - 1)
+          oscillator.frequency.value = this._frequency * 2;
+        else oscillator.frequency.value = this._frequency;
+      } else if (!this._accentChecked) {
+        oscillator.frequency.value = this._frequency;
+      }
 
-    // if (this._noteVolumes[beatNumber] != 0) {
-    oscillator.start(time + this._pushNote);
-    oscillator.stop(time + this._noteLength + this._pushNote);
-    // }
+      oscillator.start(time + this._pushNote);
+      oscillator.stop(time + this._noteLength + this._pushNote);
+    } else console.error("No beatNumber or time provided.");
   }
 
   _scheduler() {
