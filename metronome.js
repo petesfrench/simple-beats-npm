@@ -237,9 +237,7 @@ class Metronome {
         urlArray.map(async (path) => {
           let sampleHolder = {};
           sampleHolder.audioBuffer = await this._loadSound(audioCtx, path);
-          sampleHolder.name = path
-            .match(/([^\/]+)(?=\.\w+$)/)[0]
-            .replace(/-/, "_");
+          sampleHolder.name = path.match(/\/([^\/]+)\/?$/)[1].replace(/-/, "_");
           return sampleHolder;
         })
       ).then((data) => data);
