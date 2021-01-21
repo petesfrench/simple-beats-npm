@@ -126,6 +126,7 @@ class Metronome {
     }
   }
 
+
   _scheduleSamples(beatNumber, time) {
     if (beatNumber && time) {
       this._notesInQueue.push({ note: beatNumber, time: time });
@@ -243,6 +244,7 @@ class Metronome {
       ).then((data) => data);
     } else console.error("No path array had been provided");
   }
+
 
   _playSample(audioCtxParam, audioBuffer, noteVolume = 1) {
     if (audioCtxParam && audioBuffer) {
