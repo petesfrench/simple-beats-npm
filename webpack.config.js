@@ -1,7 +1,7 @@
 const path = require('path');
 
 module.exports = {
-  entry: './metronome.js',
+  entry: './metronome.ts',
   mode: 'production',
   resolve: {
     extensions: ['.js, .ts'],
