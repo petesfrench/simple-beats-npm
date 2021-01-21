@@ -4,11 +4,20 @@ module.exports = {
   entry: './metronome.js',
   mode: 'production',
   resolve: {
-    extensions: ['.js'],
+    extensions: ['.js, .ts'],
+  },
+  module: {
+    rules: [
+      {
+        test: /\.ts$/,
+        use: 'ts-loader',
+        exclude: /node_modules/,
+      }
+    ]
   },
   output: {
     path: path.resolve(__dirname, 'lib'),
-    filename: 'metronome.js',
+    filename: 'metronome.ts',
     library: 'Metronome',
     libraryExport: 'default',
     libraryTarget: 'umd'
