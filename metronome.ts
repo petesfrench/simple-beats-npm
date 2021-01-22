@@ -4,7 +4,7 @@ const DEFAULT_SCHEDULE_S: number = 0.1;
 const DEFAULT_BPM: number = 90;
 const DEFAULT_TIME_SIGNITURE: number = 16;
 const DEFAULT_NOTE_LENGTH: number = 0.05;
-const DEFAULT_OSCILLATOR_TYPE: OscillatorType = 'sine';
+const DEFAULT_OSCILLATOR_TYPE: OscillatorType = "sine";
 const DEFAULT_FREQUENCY: number = 220;
 const MIN_FREQUENCY: number = 40;
 const MINUTE: number = 15;
@@ -12,6 +12,8 @@ const DEFAULT_GAIN: number = 0;
 
 const AudioContext: new () => AudioContext = window.AudioContext || window.webkitAudioContext; //maybe change
 const audioCtx: AudioContext =  new AudioContext();
+
+
 
 interface Note {
   note: number;
