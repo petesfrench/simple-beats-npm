@@ -17,7 +17,7 @@ module.exports = {
   },
   output: {
     path: path.resolve(__dirname, 'lib'),
-    filename: 'metronome.ts',
+    filename: 'metronome.js',
     library: 'Metronome',
     libraryExport: 'default',
     libraryTarget: 'umd'

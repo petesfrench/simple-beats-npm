@@ -1,24 +1,49 @@
-const DEFAULT_LOOKAHEAD_MS = 25;
-const DEFAULT_SCHEDULE_S = 0.1;
-const DEFAULT_BPM = 90;
-const DEFAULT_TIME_SIGNITURE = 16;
-const DEFAULT_NOTE_LENGTH = 0.05;
-const DEFAULT_OSCILLATOR_TYPE = 'sine';
-const DEFAULT_FREQUENCY = 220;
-const MIN_FREQUENCY = 40;
-const MINUTE = 15;
-const DEFAULT_GAIN = 0;
+const DEFAULT_LOOKAHEAD_MS: number = 25;
+const DEFAULT_SCHEDULE_S: number = 0.1;
+const DEFAULT_BPM: number = 90;
+const DEFAULT_TIME_SIGNITURE: number = 16;
+const DEFAULT_NOTE_LENGTH: number = 0.05;
+const DEFAULT_OSCILLATOR_TYPE: OscillatorType = 'sine';
+const DEFAULT_FREQUENCY: number = 220;
+const MIN_FREQUENCY: number = 40;
+const MINUTE: number = 15;
+const DEFAULT_GAIN: number = 0;
 
-const AudioContext = window.AudioContext || window.webkitAudioContext; //maybe change
-const audioCtx = new AudioContext();
+const AudioContext: new () => AudioContext = window.AudioContext || window.webkitAudioContext; //maybe change
+const audioCtx: AudioContext =  new AudioContext();
 
+interface Note {
+  note: number;
+  time: number;
+}
+interface SampleHolder {
+    name:string;
+    audioBuffer: AudioBuffer;
+}
 class Metronome {
 
-  constructor(
-    BPM = DEFAULT_BPM,
-    timeSigniture = DEFAULT_TIME_SIGNITURE,
-    gain = DEFAULT_GAIN) {
-      //User mutable
+  public _BPM: number;
+  public _timeSigniture: number;
+  public _gain: number;
+  public _pushNote: number;
+  public _noteVolumes: Array<number>;
+  public _noteLength: number;
+  public _oscillatorType: OscillatorType;
+  public _frequency: number;
+
+  private _samplesArray: Array<SampleHolder>;
+  private _samplesLoaded: boolean;
+  private _accentChecked: boolean;
+  private _notesInQueue: Array<Note>; 
+  private _playing: boolean;
+  private _timerID: any;
+  private _nextNoteTime: number;
+  private _currentNote: number;
+  private _lookahead: number;
+  private _scheduleAheadTime: number;
+
+  constructor(public BPM = DEFAULT_BPM, public timeSigniture = DEFAULT_TIME_SIGNITURE, public gain = DEFAULT_GAIN) {
+    //User mutable
     this._BPM = BPM;
     this._timeSigniture = timeSigniture;
     this._gain = gain;
@@ -28,12 +53,12 @@ class Metronome {
     this._oscillatorType = DEFAULT_OSCILLATOR_TYPE;
     this._frequency = DEFAULT_FREQUENCY;
 
-      //Functionally assigned
+    //Functionally assigned
     this._samplesArray = [];
     this._samplesLoaded = false;
     this._accentChecked = false;
 
-      //Internal values
+    // private variables
     this._notesInQueue = [];
     this._playing = false;
     this._timerID;
@@ -41,65 +66,62 @@ class Metronome {
     this._currentNote = 0;
     this._lookahead = DEFAULT_LOOKAHEAD_MS;
     this._scheduleAheadTime = DEFAULT_SCHEDULE_S;
+  }
 
-  };
-
-  //Client settings ----------------------------------------
-  set BPM(newBPM) {
+  set __BPM(newBPM: number) {
     this._BPM = Number(newBPM);
   }
 
-  set timeSigniture(newTimeSigniture) {
+  set __timeSigniture(newTimeSigniture: number) {
     this._timeSigniture = Number(newTimeSigniture);
   }
 
-  updateAccentChecked() {
-    this._accentChecked ^= true;
-  }
-
-  set noteVolumes(volumesArray) {
+  set __noteVolumes(volumesArray: Array<number>) {
     this._noteVolumes = volumesArray;
   }
 
-  set budge(time) {
+  set budge(time: number) {
     this._pushNote = time;
   }
 
-  set noteLength(time) {
-    this._noteLength =  Number(time);
+  set noteLength(time: number) {
+    this._noteLength = Number(time);
   }
 
-  set oscillatorType(wave) {
-    let newWaveType;
+  set oscillatorType(wave: string) {
     switch (wave) {
       case 'sine':
       case 'square':
       case 'sawtooth':
       case 'triangle':
-        newWaveType = wave;
+        this._oscillatorType = wave;
         break;
       default:
-        newWaveType = DEFAULT_OSCILLATOR_TYPE;
+        this._oscillatorType = DEFAULT_OSCILLATOR_TYPE;
     }
-    this._oscillatorType = newWaveType;
   }
 
-  set frequency(freq) {
+  set frequency(freq: number) {
     if (freq <= MIN_FREQUENCY) freq = MIN_FREQUENCY;
     this._frequency = freq;
   }
 
-  set gain(gain) {
+  set __gain(gain: number) {
     this._noteVolumes = new Array(this._timeSigniture).fill(gain);
   }
 
-  _valueChecks() {
+
+  updateAccentChecked(): void {
+    this._accentChecked !== true;
+  }
+
+  _valueChecks(): void {
     while (this._noteVolumes.length < this._timeSigniture) {
       this._noteVolumes = [...this._noteVolumes, ...this._noteVolumes]
     }
   }
 
-  start() {
+  start(): void {
     if (!this._playing) {
       this._currentNote = 0;
       this._nextNoteTime = audioCtx.currentTime;
@@ -109,12 +131,12 @@ class Metronome {
     }
   }
 
-  stop() {
+  stop(): void {
     window.clearTimeout(this._timerID);
     this._playing = false;
   }
 
-  _nextNote() {
+  _nextNote(): void {
     const secondsPerBeat = MINUTE / this._BPM;
     this._nextNoteTime += secondsPerBeat;
     this._currentNote++;
@@ -123,17 +145,13 @@ class Metronome {
     }
   }
 
-  // This allows output of the notesInQueue array to sync with graphics
-  // aListener(val) {};
-  // registerListener(listener) {
-  //   this.aListener = listener;
-  // }
 
-  _scheduleSamples(beatNumber, time) {
+  _scheduleSamples(beatNumber: number, time: number) {
+    const newNote: Note = { note: beatNumber, time: time };
 
-    this._notesInQueue.push({ note: beatNumber, time: time });
-    this.aListener(this._notesInQueue, audioCtx.currentTime, this._samplesArray[0].name)
-    if (this._notesInQueue.length >= this._timeSigniture) this._notesInQueue.splice(0,1);
+    this._notesInQueue.push(newNote);
+
+    if (this._notesInQueue.length >= this._timeSigniture) this._notesInQueue.splice(0, 1);
 
     if (this._accentChecked && this._samplesArray.length >= 2) {
       if (beatNumber === this._timeSigniture - 1) this._playSample(audioCtx, this._samplesArray[1].audioBuffer, this._noteVolumes[beatNumber]);
@@ -144,12 +162,14 @@ class Metronome {
 
   }
 
-  _scheduleOscillator(beatNumber, time) {
+  _scheduleOscillator (beatNumber: number, time: number) : void {
 
-    this._notesInQueue.push({ note: beatNumber, time: time });
+    const newNote: Note = { note: beatNumber, time: time };
 
-    const oscillator = audioCtx.createOscillator();
-    const gainNode = audioCtx.createGain();
+    this._notesInQueue.push(newNote);
+
+    const oscillator: OscillatorNode = audioCtx.createOscillator();
+    const gainNode: GainNode = audioCtx.createGain();
 
     oscillator.connect(gainNode);
     gainNode.connect(audioCtx.destination);
@@ -165,15 +185,13 @@ class Metronome {
       oscillator.frequency.value = this._frequency;
     }
 
-    // if (this._noteVolumes[beatNumber] != 0) {
-      oscillator.start(time + this._pushNote);
-      oscillator.stop(time + this._noteLength + this._pushNote);
-    // }
+    oscillator.start(time + this._pushNote);
+    oscillator.stop(time + this._noteLength + this._pushNote);
   }
 
-  _scheduler() {
+  _scheduler(): void {
 
-    let context;
+    let context: Metronome;
     if (!context) context = this;
 
     function contextScheduler() {
@@ -189,9 +207,8 @@ class Metronome {
 
   }
 
-  //Deal with custom samples
 
-  loadSamples(urlArray) {
+  loadSamples(urlArray: Array<string>): void {
     this._setUpSample(urlArray)
       .then(samples => {
         this._samplesArray = [...samples];
@@ -199,28 +216,28 @@ class Metronome {
       })
   }
 
-  async _loadSound(audioCtxParam, filePath) {
+  async _loadSound(audioCtxParam: BaseAudioContext, filePath: string): Promise<AudioBuffer> {
     try {
-    const response = await fetch(filePath);
-    const arrayBuffer = await response.arrayBuffer()
-    const audioBuffer = await audioCtxParam.decodeAudioData(arrayBuffer);
-    return audioBuffer;
+      const response = await fetch(filePath);
+      const arrayBuffer = await response.arrayBuffer()
+      const audioBuffer = await audioCtxParam.decodeAudioData(arrayBuffer);
+      return audioBuffer;
     } catch (e) {
       console.log(e);
+      
     }
   };
-
-  async _setUpSample(urlArray) {
+  async _setUpSample(urlArray: Array<string>): Promise<SampleHolder[]> {
     return Promise.all(urlArray.map(async path => {
-      let sampleHolder = {};
-      sampleHolder.audioBuffer = await this._loadSound(audioCtx, path);
-      sampleHolder.name = path.match(/\/([^\/]+)\/?$/)[1].replace(/-/, '_');
-      return sampleHolder;
-    }))
-    .then(data => data);
+      let newSample: SampleHolder = {
+        name: path.match(/\/([^\/]+)\/?$/)[1].replace(/-/, '_'),
+        audioBuffer: await this._loadSound(audioCtx, path)
+      }
+      return newSample;
+    }));
   };
 
-  _playSample(audioCtxParam, audioBuffer, noteVolume = 1) {
+  _playSample(audioCtxParam: BaseAudioContext, audioBuffer: AudioBuffer, noteVolume: number = 1): AudioBufferSourceNode {
     const sampleSource = audioCtxParam.createBufferSource();
     const gainNode = audioCtx.createGain();
     sampleSource.buffer = audioBuffer;
@@ -230,7 +247,6 @@ class Metronome {
     sampleSource.start();
     return sampleSource;
   }
-
-}
+} 
 
 export default Metronome;

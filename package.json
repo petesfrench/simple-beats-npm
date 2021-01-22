@@ -31,5 +31,9 @@
     "webpack-cli": "^3.3.10"
   },
   "author": "Peter French",
-  "license": "ISC"
+  "license": "ISC",
+  "dependencies": {
+    "@types/webaudioapi": "0.0.27"
+  }
 }
+
