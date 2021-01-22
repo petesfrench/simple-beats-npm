@@ -12,7 +12,7 @@ document.addEventListener('DOMContentLoaded', () => {
       playing = false;
     } else if (!playing) {
       metronome.start();
-      playButton.innerHTML = 'Stop';
+      playButton.innerHTML = 'Pause';
       playing = true
     }
   })

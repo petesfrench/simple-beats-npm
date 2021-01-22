@@ -104,8 +104,7 @@ class Metronome {
   }
 
   set frequency(freq: number) {
-
-    if (freq <= MIN_FREQUENCY) freq = MIN_FREQUENCY;
+    if (freq <= MIN_FREQUENCY) this._frequency = MIN_FREQUENCY;
     this._frequency = freq;
   }
 
