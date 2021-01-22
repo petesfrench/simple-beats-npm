@@ -12,8 +12,6 @@ const DEFAULT_GAIN: number = 0;
 const AudioContext: new () => AudioContext = window.AudioContext || window.webkitAudioContext; //maybe change
 const audioCtx: AudioContext =  new AudioContext();
 
-
-
 interface Note {
   note: number;
   time: number;
