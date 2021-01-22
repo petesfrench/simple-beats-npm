@@ -69,7 +69,6 @@ class Metronome {
     this._scheduleAheadTime = DEFAULT_SCHEDULE_S;
   }
 
-<<<<<<< HEAD:metronome.ts
   set __BPM(newBPM: number) {
     this._BPM = Number(newBPM);
   }
@@ -150,7 +149,6 @@ class Metronome {
   }
 
 
-<<<<<<< HEAD:metronome.ts
   _scheduleSamples(beatNumber: number, time: number) {
     const newNote: Note = { note: beatNumber, time: time };
 
