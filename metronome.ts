@@ -25,7 +25,7 @@ class Metronome {
   public _BPM: number;
   public _timeSigniture: number;
   public _gain: number;
-  public _pushNote: number;
+  public _Note: number;
   public _noteVolumes: Array<number>;
   public _noteLength: number;
   public _oscillatorType: OscillatorType;
