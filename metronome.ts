@@ -1,4 +1,3 @@
-
 const DEFAULT_LOOKAHEAD_MS: number = 25;
 const DEFAULT_SCHEDULE_S: number = 0.1;
 const DEFAULT_BPM: number = 90;
