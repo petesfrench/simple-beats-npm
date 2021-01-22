@@ -8,9 +8,11 @@ document.addEventListener('DOMContentLoaded', () => {
   playButton.addEventListener('click', () => {
     if (playing) {
       metronome.stop()
+      playButton.innerHTML = 'Play';
       playing = false;
     } else if (!playing) {
-      metronome.start()
+      metronome.start();
+      playButton.innerHTML = 'Stop';
       playing = true
     }
   })
