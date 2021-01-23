@@ -41,6 +41,7 @@ class Metronome {
   private _currentNote: number;
   private _lookahead: number;
   private _scheduleAheadTime: number;
+  private _pushNote: number;
 
   constructor(public BPM = DEFAULT_BPM, public timeSigniture = DEFAULT_TIME_SIGNITURE, public gain = DEFAULT_GAIN) {
     //User mutable
