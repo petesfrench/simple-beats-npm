@@ -10,7 +10,7 @@
     "./lib"
   ],
   "scripts": {
-    "test": "jest",
+    "test": "nyc --reporter=metronome.test.js --reporter=text mocha",
     "start": "webpack --watch",
     "build": "webpack"
   },
@@ -40,6 +40,8 @@
   "dependencies": {
     "@types/webaudioapi": "0.0.27",
     "chai": "^4.2.0",
-    "mocca": "^1.0.3"
+    ,
+    "mocha": "^8.2.1"
+    "nyc": "^15.1.0"
   }
 }
