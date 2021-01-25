@@ -3,7 +3,7 @@ const DEFAULT_SCHEDULE_S: number = 0.1;
 const DEFAULT_BPM: number = 90;
 const DEFAULT_TIME_SIGNITURE: number = 16;
 const DEFAULT_NOTE_LENGTH: number = 0.05;
-const DEFAULT_OSCILLATOR_TYPE: OscillatorType = "sine";
+const DEFAULT_OSCILLATOR_TYPE: OscillatorType = 'sine';
 const DEFAULT_FREQUENCY: number = 220;
 const MIN_FREQUENCY: number = 40;
 const MINUTE: number = 15;
@@ -58,7 +58,7 @@ class Metronome {
     this._samplesLoaded = false;
     this._accentChecked = false;
 
-    //Internal values
+    // private variables
     this._notesInQueue = [];
     this._playing = false;
     this._timerID;
@@ -94,7 +94,6 @@ class Metronome {
       case 'square':
       case 'sawtooth':
       case 'triangle':
-
         this._oscillatorType = wave;
         break;
       default:
@@ -103,7 +102,7 @@ class Metronome {
   }
 
   set frequency(freq: number) {
-    if (freq <= MIN_FREQUENCY) this._frequency = MIN_FREQUENCY;
+    if (freq <= MIN_FREQUENCY) freq = MIN_FREQUENCY;
     this._frequency = freq;
   }
 
@@ -118,7 +117,7 @@ class Metronome {
 
   _valueChecks(): void {
     while (this._noteVolumes.length < this._timeSigniture) {
-      this._noteVolumes = [...this._noteVolumes, ...this._noteVolumes];
+      this._noteVolumes = [...this._noteVolumes, ...this._noteVolumes]
     }
   }
 
@@ -172,18 +171,19 @@ class Metronome {
     const oscillator: OscillatorNode = audioCtx.createOscillator();
     const gainNode: GainNode = audioCtx.createGain();
 
+    oscillator.connect(gainNode);
+    gainNode.connect(audioCtx.destination);
+    oscillator.type = this._oscillatorType;
 
-      if (this._noteVolumes[beatNumber] === 0) {
-        gainNode.gain.setValueAtTime(0, audioCtx.currentTime);
-      }
-      if (this._accentChecked) {
-        if (beatNumber === this._timeSigniture - 1)
-          oscillator.frequency.value = this._frequency * 2;
-        else oscillator.frequency.value = this._frequency;
-      } else if (!this._accentChecked) {
-        oscillator.frequency.value = this._frequency;
-      }
-
+    if (this._noteVolumes[beatNumber] === 0) {
+      gainNode.gain.setValueAtTime(0, audioCtx.currentTime)
+    }
+    if (this._accentChecked) {
+      if (beatNumber === this._timeSigniture - 1) oscillator.frequency.value = this._frequency * 2;
+      else oscillator.frequency.value = this._frequency;
+    } else if (!this._accentChecked) {
+      oscillator.frequency.value = this._frequency;
+    }
 
     oscillator.start(time + this._pushNote);
     oscillator.stop(time + this._noteLength + this._pushNote);
@@ -192,10 +192,10 @@ class Metronome {
   _scheduler(): void {
 
     let context: Metronome;
-
     if (!context) context = this;
 
     function contextScheduler() {
+
       console.log(' context._nextNote-> ',context._nextNote );
       console.log('context.currentNote -> ', context._currentNote);
       while (
@@ -209,17 +209,17 @@ class Metronome {
             context._currentNote,
             context._nextNoteTime
           );
+
         context._nextNote();
         
       }
-      context._timerID = window.setTimeout(
-        contextScheduler,
-        context._lookahead
-      );
+      context._timerID = window.setTimeout(contextScheduler, context._lookahead);
     }
 
-    contextScheduler();
+    contextScheduler()
+
   }
+
 
   loadSamples(urlArray: Array<string>): void {
     this._setUpSample(urlArray)

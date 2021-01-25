@@ -14,3 +14,13 @@ describe('Setters', () => {
 });
 
 
+describe("Testing the playing and stopping state of the Metronome", () => {
+  test("Should Start and Stop playing", () => {
+    const newMetronome = new Metronome();
+    newMetronome.start();
+    expect(newMetronome._playing).toEqual(true);
+    newMetronome.stop();
+    expect(newMetronome._playing).toEqual(false);
+  });
+});
+
