@@ -196,18 +196,21 @@ class Metronome {
     if (!context) context = this;
 
     function contextScheduler() {
+      console.log(' context._nextNote-> ',context._nextNote );
+      console.log('context.currentNote -> ', context._currentNote);
       while (
         context._nextNoteTime <
         audioCtx.currentTime + context._scheduleAheadTime
       ) {
         if (context._samplesLoaded)
           context._scheduleSamples(context._currentNote, context._nextNoteTime);
-        else
+        else  
           context._scheduleOscillator(
             context._currentNote,
             context._nextNoteTime
           );
         context._nextNote();
+        
       }
       context._timerID = window.setTimeout(
         contextScheduler,

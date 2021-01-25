@@ -64,15 +64,12 @@ describe("Testing the setter methods of a new Metronome Instance", () => {
 
 
 describe("Testing the playing and stopping state of the Metronome", () => {
-  // test("Should start playing", () => {
-  //   const instance = new Metronome();
-  //   instance.updateAccentChecked();
-
-
-
-  //   instance.start()
-  //   console.log(instance._playing);
-  // });
+  test("Should start playing", () => {
+    const instance = new Metronome();
+    console.log('hello',instance._playing);
+    instance.start()
+    console.log('hello',instance._playing);
+  });
 
 
   test("Should Stop playing", () => {

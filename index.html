@@ -1,40 +1,33 @@
 <!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <style>
-      body {
-        background-color: black;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-      }
-      
-      .dash {
-        background-color: white;
-        padding: 10em;
-        display: flex;
-        justify-content: space-between;
-      }
+<html>
+<head>
+  <!-- add mocha css, to show results -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/mocha/3.2.0/mocha.css">
+  <!-- add mocha framework code -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/mocha/3.2.0/mocha.js"></script>
+  <script>
+    mocha.setup('bdd'); // minimal setup
+  </script>
+  <!-- add chai -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/chai/3.5.0/chai.js"></script>
+  <script>
+    // chai has a lot of stuff, let's make assert global
+    let assert = chai.assert;
+  </script>
+</head>
 
-    </style>
-    <script src="./lib/metronome.js"></script>
-    <!-- <script type="module" src="index.js"></script> -->
-    <title>Drum machine</title>
-  </head>
+<body>
+  <!-- the script with tests (describe, it...) -->
+  <script src='/lib/metronome.js' ></script>
+  <script src='/metronome.test.js'></script>
 
-  <body>
-    <div class="dash">
-      <form>
-        <label for="quantity">Frequency:</label>
-        <input type="number" id="FRQ_setter" name="FRQ" value="220" min="40" max="800" />
-        <label for="quantity">Note Length:</label>
-        <input type="number" id="NL_setter" name="NL" value="0.05" min="0.01" max="1" />
-        <label for="quantity">BPM</label>
-        <input type="number" id="BPM_setter" name="BPM" value="90" min="1" max="220" />
-      </form>
-      <button id="playButton">Play</button>
-    </div>
-  </body>
+  <!-- the element with id="mocha" will contain test results -->
+  <div id="mocha"></div>
+
+  <!-- run tests! -->
+  <script>
+    mocha.run();
+  </script>
+</body>
+
 </html>

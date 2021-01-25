@@ -38,6 +38,8 @@
   "author": "Peter French",
   "license": "ISC",
   "dependencies": {
-    "@types/webaudioapi": "0.0.27"
+    "@types/webaudioapi": "0.0.27",
+    "chai": "^4.2.0",
+    "mocca": "^1.0.3"
   }
 }
