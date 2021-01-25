@@ -59,8 +59,10 @@ describe("Testing the setter methods of a new Metronome Instance", () => {
 });
 
 describe("Testing the playing and stopping state of the Metronome", () => {
-  test("Should Stop playing", () => {
+  test("Should Start and Stop playing", () => {
     const newMetronome = new Metronome();
+    newMetronome.start();
+    expect(newMetronome._playing).toEqual(true);
     newMetronome.stop();
     expect(newMetronome._playing).toEqual(false);
   });

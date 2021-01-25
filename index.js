@@ -1,11 +1,13 @@
 document.addEventListener('DOMContentLoaded', () => {
+
   const metronome = new Metronome();
   metronome.updateAccentChecked();
   
-
   let playing = false;
 
   const playButton = document.getElementById('playButton');
+
+
   playButton.addEventListener('click', () => {
     if (playing) {
       metronome.stop()
@@ -18,8 +20,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   })
 
-
-
+  metronome._oscil
   const FrequencyInput = document.getElementById('FRQ_setter');
   const BPMInput = document.getElementById('BPM_setter');
   const NLInput = document.getElementById('NL_setter');
