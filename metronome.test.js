@@ -12,6 +12,31 @@ describe("Testing the playing and stopping state of the Metronome", () => {
   });
 });
 
+describe("should have own methods as own properties", () => {
+  beforeEach(() => {
+    newMetronome = new Metronome();
+  });
+  it("Should have own property _notesInQueue", () => {
+    expect(newMetronome).to.have.property("_notesInQueue");
+  });
+  it("Should have own property _accentChecked", () => {
+    expect(newMetronome).to.have.property("_accentChecked");
+  });
+  it("Should have own property _playing", () => {
+    expect(newMetronome).to.have.property("_playing");
+  });
+  it("Should have own property _nextNoteTime", () => {
+    expect(newMetronome).to.have.property("_nextNoteTime");
+  });
+  it("Should have own property _audioCTX ", () => {
+    expect(newMetronome).to.have.property("_audioCTX");
+  });
+  it("Should have own property _scheduleAheadTime", () => {
+    console.log(newMetronome);
+    expect(newMetronome).to.have.property("_scheduleAheadTime");
+  });
+});
+
 describe("Testing the setter methods", () => {
   beforeEach(() => (newMetronome = new Metronome()));
 
@@ -88,26 +113,32 @@ describe("Sampling", () => {
       assert.equal(newMetronome.__samplesArray.length, 3);
   });
 });
-
 describe("Testing the delay of the application", () => {
+  beforeEach(() => (newMetronome = new Metronome()));
   let delay = 0;
-  let overtime = 0;
   const MINUTE_IN_MS = 6000;
   const MINUTE_IN_S = 6;
   const acceptable_delay = 0.01;
 
+  it("should Setup testing environment", (done) => {
+    try {
+      setTimeout(() => {
+        console.log("Testing environment ~ready");
+        done();
+      }, 1000);
+    } catch (error) {
+      done(error);
+    }
+  }).timeout(10000);
+
   it("should have a delay inferior to 10ms when at 60 beats per minute", (done) => {
-    newMetronome = new Metronome();
-    newMetronome.__BPM = 90;
-    const POS = (newMetronome._BPM * 4) / 10;
+    newMetronome.__BPM = 60;
     newMetronome.start();
 
     setTimeout(() => {
       try {
         newMetronome.stop();
-        delay = newMetronome._notesInQueue[POS].time - MINUTE_IN_S;
-        overtime = newMetronome._notesInQueue[POS - 1].time;
-        console.log(delay);
+        delay = newMetronome._notesInQueue[newMetronome._BPM / 10].time - MINUTE_IN_S;
         assert.equal(delay < acceptable_delay, true);
         done();
       } catch (error) {
@@ -117,19 +148,32 @@ describe("Testing the delay of the application", () => {
   }).timeout(10000);
 
   it("should have a delay inferior to 10ms when at 90 beats per minute", (done) => {
-    newMetronome = new Metronome();
     newMetronome.__BPM = 90;
-    const POS = (newMetronome._BPM * 4) / 10;
     newMetronome.start();
 
     setTimeout(() => {
       try {
         newMetronome.stop();
-        console.log(overtime);
-        delay = Math.abs(
-          newMetronome._notesInQueue[POS].time - overtime - MINUTE_IN_S
-        );
-        overtime = newMetronome._notesInQueue[POS].time;
+        delay =
+          newMetronome._notesInQueue[newMetronome._BPM / 10].time - MINUTE_IN_S;
+        assert.equal(delay < acceptable_delay, true);
+        done();
+      } catch (error) {
+        return done(error);
+      }
+    }, MINUTE_IN_MS);
+  }).timeout(10000);
+
+  it("should have a delay inferior to 10ms when at 160 beats per minute", (done) => {
+    newMetronome.__BPM = 160;
+    console.log(newMetronome._notesInQueue);
+    newMetronome.start();
+
+    setTimeout(() => {
+      try {
+        newMetronome.stop();
+        delay =
+          newMetronome._notesInQueue[newMetronome._BPM / 10].time - MINUTE_IN_S;
         console.log(delay);
         assert.equal(delay < acceptable_delay, true);
         done();
@@ -139,60 +183,20 @@ describe("Testing the delay of the application", () => {
     }, MINUTE_IN_MS);
   }).timeout(10000);
 
-  // it("should have a delay inferior to 10ms when at 130 beats per minute", (done) => {
-  //   newMetronome.__BPM = 120;
-  //   const POS = (newMetronome._BPM * 4)/10;
-  //   newMetronome.start();
+  it("should have a delay inferior to 10ms when at 240 beats per minute", (done) => {
+    newMetronome.__BPM = 240;
+    newMetronome.start();
 
-  //   setTimeout(() => {
-  //     try {
-  //       newMetronome.stop();
-  //       delay = newMetronome._notesInQueue[POS].time - MINUTE_IN_S;
-  //       console.log(delay);
-  //       assert.equal(delay < acceptable_delay, true);
-  //       done();
-  //     } catch (error) {
-  //       return done(error);
-  //     }
-  //   }, MINUTE_IN_MS);
-
-  // }).timeout(10000);
-
-  // it("should have a delay inferior to 10ms when at 180 beats per minute", (done) => {
-  //   newMetronome.__BPM = 180;
-  //   const POS = (newMetronome._BPM * 4)/10;
-  //   newMetronome.start();
-
-  //   setTimeout(() => {
-  //     try {
-  //       newMetronome.stop();
-  //       delay = newMetronome._notesInQueue[POS].time - MINUTE_IN_S;
-  //       console.log(delay);
-  //       assert.equal(delay < acceptable_delay, true);
-  //       done();
-  //     } catch (error) {
-  //       return done(error);
-  //     }
-  //   }, MINUTE_IN_MS);
-
-  // }).timeout(10000);
-
-  // it("should have a delay inferior to 10ms when at 240 beats per minute", (done) => {
-  //   newMetronome.__BPM = 240;
-  //   const POS = (newMetronome._BPM * 4)/10;
-  //   newMetronome.start();
-
-  //   setTimeout(() => {
-  //     try {
-  //       newMetronome.stop();
-  //       delay = newMetronome._notesInQueue[POS].time - MINUTE_IN_S;
-  //       console.log(delay);
-  //       assert.equal(delay < acceptable_delay, true);
-  //       done();
-  //     } catch (error) {
-  //       return done(error);
-  //     }
-  //   }, MINUTE_IN_MS);
-
-  // }).timeout(10000);
+    setTimeout(() => {
+      try {
+        newMetronome.stop();
+        delay =
+          newMetronome._notesInQueue[newMetronome._BPM / 10].time - MINUTE_IN_S;
+        assert.equal(delay < acceptable_delay, true);
+        done();
+      } catch (error) {
+        return done(error);
+      }
+    }, MINUTE_IN_MS);
+  }).timeout(10000);
 });

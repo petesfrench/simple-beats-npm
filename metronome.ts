@@ -6,12 +6,8 @@ const DEFAULT_NOTE_LENGTH: number = 0.05;
 const DEFAULT_OSCILLATOR_TYPE: OscillatorType = "sine";
 const DEFAULT_FREQUENCY: number = 220;
 const MIN_FREQUENCY: number = 40;
-const MINUTE: number = 15;
+const MINUTE: number = 60;
 const DEFAULT_GAIN: number = 0;
-
-const AudioContext: new () => AudioContext =
-  window.AudioContext || window.webkitAudioContext; //maybe change
-const audioCtx: AudioContext = new AudioContext();
 
 interface Note {
   note: number;
@@ -41,11 +37,13 @@ class Metronome {
   private _currentNote: number;
   private _lookahead: number;
   private _scheduleAheadTime: number;
+  private _audioCTX: AudioContext;
+  private _AudioContext: new () => AudioContext;
 
   constructor(
     public BPM = DEFAULT_BPM,
     public timeSigniture = DEFAULT_TIME_SIGNITURE,
-    public gain = DEFAULT_GAIN
+    public gain = DEFAULT_GAIN,
   ) {
     //User mutable
     this._BPM = BPM;
@@ -70,6 +68,8 @@ class Metronome {
     this._currentNote = 0;
     this._lookahead = DEFAULT_LOOKAHEAD_MS;
     this._scheduleAheadTime = DEFAULT_SCHEDULE_S;
+    this._AudioContext = window.AudioContext || window.webkitAudioContext;
+    this._audioCTX = new this._AudioContext();
   }
 
   set __BPM(newBPM: number) {
@@ -127,7 +127,7 @@ class Metronome {
   start(): void {
     if (!this._playing) {
       this._currentNote = 0;
-      this._nextNoteTime = audioCtx.currentTime;
+      this._nextNoteTime = 0;
       this._valueChecks();
       this._scheduler();
       this._playing = true;
@@ -159,7 +159,7 @@ class Metronome {
     this._notesInQueue.push(newNote);
     this.aListener(
       this._notesInQueue,
-      audioCtx.currentTime,
+      this._audioCTX.currentTime,
       this._samplesArray[0].name
     );
     if (this._notesInQueue.length >= this._timeSigniture)
@@ -168,19 +168,19 @@ class Metronome {
     if (this._accentChecked && this._samplesArray.length >= 2) {
       if (beatNumber === this._timeSigniture - 1)
         this._playSample(
-          audioCtx,
+          this._audioCTX,
           this._samplesArray[1].audioBuffer,
           this._noteVolumes[beatNumber]
         );
       else
         this._playSample(
-          audioCtx,
+          this._audioCTX,
           this._samplesArray[0].audioBuffer,
           this._noteVolumes[beatNumber]
         );
     } else {
       this._playSample(
-        audioCtx,
+        this._audioCTX,
         this._samplesArray[0].audioBuffer,
         this._noteVolumes[beatNumber]
       );
@@ -192,15 +192,15 @@ class Metronome {
 
     this._notesInQueue.push(newNote);
 
-    const oscillator: OscillatorNode = audioCtx.createOscillator();
-    const gainNode: GainNode = audioCtx.createGain();
+    const oscillator: OscillatorNode = this._audioCTX.createOscillator();
+    const gainNode: GainNode = this._audioCTX.createGain();
 
     oscillator.connect(gainNode);
-    gainNode.connect(audioCtx.destination);
+    gainNode.connect(this._audioCTX.destination);
     oscillator.type = this._oscillatorType;
 
     if (this._noteVolumes[beatNumber] === 0) {
-      gainNode.gain.setValueAtTime(0, audioCtx.currentTime);
+      gainNode.gain.setValueAtTime(0, this._audioCTX.currentTime);
     }
     if (this._accentChecked) {
       if (beatNumber === this._timeSigniture - 1)
@@ -221,7 +221,7 @@ class Metronome {
     function contextScheduler() {
       while (
         context._nextNoteTime <
-        audioCtx.currentTime + context._scheduleAheadTime
+        context._audioCTX.currentTime + context._scheduleAheadTime
       ) {
         if (context._samplesLoaded)
           context._scheduleSamples(context._currentNote, context._nextNoteTime);
@@ -267,7 +267,7 @@ class Metronome {
       urlArray.map(async (path) => {
         let newSample: SampleHolder = {
           name: path.match(/\/([^\/]+)\/?$/)[1].replace(/-/, "_"),
-          audioBuffer: await this._loadSound(audioCtx, path),
+          audioBuffer: await this._loadSound(this._audioCTX, path),
         };
         return newSample;
       })
@@ -280,7 +280,7 @@ class Metronome {
     noteVolume: number = 1
   ): AudioBufferSourceNode {
     const sampleSource = audioCtxParam.createBufferSource();
-    const gainNode = audioCtx.createGain();
+    const gainNode = this._audioCTX.createGain();
     sampleSource.buffer = audioBuffer;
     sampleSource.connect(gainNode);
     gainNode.connect(audioCtxParam.destination);
