@@ -40,8 +40,7 @@
   "dependencies": {
     "@types/webaudioapi": "0.0.27",
     "chai": "^4.2.0",
-    ,
-    "mocha": "^8.2.1"
+    "mocha": "^8.2.1",
     "nyc": "^15.1.0"
   }
 }
