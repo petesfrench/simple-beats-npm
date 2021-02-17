@@ -1,5 +1,4 @@
 document.addEventListener('DOMContentLoaded', () => {
-  const Metronome = getMetronome();
   const metronome = new Metronome(40, 4);
   metronome.updateAccentChecked();
 
