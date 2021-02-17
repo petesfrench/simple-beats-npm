@@ -1,4 +1,4 @@
-### simple-beats-npm
+# simple-beats-npm
 
 Simple beats is a simple and customisable NPM package that allows for the creation of indervidual 'metronomes'. You can you the built in oscillator or upload your own samples, change the speed and volume of the sample aswell as when they are played.
 
@@ -8,7 +8,7 @@ npm i simple-beats;
 
 const newMetronome = new Metronome(); 
 
-# This will create the most basic version of a metronome and can be stopped and started as follows.
+### This will create the most basic version of a metronome and can be stopped and started as follows.
 
 ## Functionality
 
@@ -16,11 +16,11 @@ newBeat.start();
 
 newBeat.stop(); 
 
-# To upload your own samples use:
+### To upload your own samples use:
 
 newBeat.loadSamples(['sample url']);
 
-# You can assign the following values:
+### You can assign the following values:
 
 .BPM -> Number 
 
