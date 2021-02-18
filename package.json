@@ -10,7 +10,7 @@
     "./lib"
   ],
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "nyc --reporter=metronome.test.js --reporter=text mocha",
     "start": "webpack --watch",
     "build": "webpack"
   },
@@ -25,9 +25,23 @@
     "@babel/cli": "^7.8.4",
     "@babel/core": "^7.8.4",
     "@babel/preset-env": "^7.8.4",
+    "@types/jest": "^26.0.20",
+    "gulp": "^4.0.2",
+    "jest": "^26.6.3",
+    "jsdom": "16.4.0",
+    "jsdom-global": "3.0.2",
+    "ts-jest": "^26.4.4",
+    "ts-loader": "^6.2.1",
+    "typescript": "^3.9.7",
     "webpack": "^4.41.5",
     "webpack-cli": "^3.3.10"
   },
   "author": "Peter French",
-  "license": "ISC"
+  "license": "ISC",
+  "dependencies": {
+    "@types/webaudioapi": "0.0.27",
+    "chai": "^4.2.0",
+    "mocha": "^8.2.1",
+    "nyc": "^15.1.0"
+  }
 }
